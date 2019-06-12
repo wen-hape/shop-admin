@@ -2,7 +2,7 @@
   <div>
     <el-row type="flex" justify="space-between">
       <div>
-        <el-button>新增</el-button>
+        <el-button @click='handleToGoodsAdd'>新增</el-button>
         <el-button type="danger"
         @click="handleDeleteMore">
         删除</el-button>
@@ -39,18 +39,18 @@
       <el-table-column label="价格" 
       prop="sell_price" width="120">
       </el-table-column>
-    </el-table>
-    <el-table-column label="操作">
-      <template slot-scope="scope">
-        <el-button
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
           size="mini"
           @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-        <el-button
+          <el-button
           size="mini"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-      </template>
-    </el-table-column>
+        </template>
+      </el-table-column>
+    </el-table>
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -152,6 +152,12 @@
       handleSearch(){
         //发起请求，赋值searchValue
         this.getList();
+      },
+      handleToGoodsAdd(){
+        this.$router.push('/admin/goods-add')
+      },
+      handleEdit(goods){
+        this.$router.push('/admin/goods-edit/' + goods.id)
       }
     },
     mounted(){
