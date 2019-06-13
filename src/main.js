@@ -12,6 +12,7 @@ import GoodsList from "./pages/GoodsList.vue"
 import CategoryList from "./pages/CategoryList.vue"
 import GoodsAdd from "./pages/GoodsAdd.vue"
 import GoodsEdit from "./pages/GoodsEdit.vue"
+import store from "./store";
 
 // element: 2.注册element插件
 Vue.use(ElementUI);
@@ -60,10 +61,39 @@ const router = new VueRouter({
   routes
 })
 
+// 路由守卫
+// to: 去哪个页面
+// from:页面的来源
+// next：是函数可以接受参数，参数是url可以跳转到该url，如果不传参数会跳转to的页面
+// next()方法是必须要调用的
+router.beforeEach((to,from,next)=>{
+  axios({
+    url:'http://localhost:8899/admin/account/islogin',
+    method:'GET',
+    withCredentials:true
+  }).then(res =>{
+    const{code} = res.data;
+    if(to.path === '/login'){
+      if(code === 'logined'){
+        next('/admin/goods-list')
+      }else{
+        next();
+      }
+    }else{
+      if(code === 'logined'){
+        next();
+      }else{
+        next('/login')
+      }
+    }
+  })
+})
+
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 
 new Vue({
   render: h => h(App),
-  router
+  router,
+  store
 }).$mount('#app')

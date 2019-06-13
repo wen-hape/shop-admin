@@ -65,7 +65,8 @@
           list-type="picture-card"
           :on-success="handleCartSuccess"
           :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove">
+          :on-remove="handleRemove"
+          :file-list="form.fileList">
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
@@ -123,7 +124,7 @@ export default {
       onSubmit() {
         //提交到添加商品的接口
         this.$axios({
-          url:'http://localhost:8899/admin/goods/add/goods',
+          url:'http://localhost:8899/admin/goods/edit' + this.$route.params.id,
           method:'POST',
           data:this.form,
           withCredentials:true
@@ -134,13 +135,12 @@ export default {
             this.$message.success(message);
             this.$router.back();
           }else{
-            this.$router.push('/login');
+            // this.$router.push('/login');
           }
         })
       },
       handleAvatarSuccess(res, file) {
         this.imageUrl = URL.createObjectURL(file.raw);
-        console.log(this.imageUrl);
         //把上传成功的结果赋值给form.imgList
         this.form.imgList = [res];
       },
@@ -156,9 +156,9 @@ export default {
       handleRemove(file, fileList) {
         // console.log(file, fileList);
         //把删除后的列表赋值给this.form.fileList
-        const files = fileList.map(v => {
-          return v.response;
-        });
+        // const files = fileList.map(v => {
+        //   return v.response;
+        // });
         this.form.fileList = files;
       },
       //图片的预览
@@ -185,7 +185,6 @@ export default {
       }).then(res => {
         const {status,message} = res.data;
         this.categorys = message;
-        console.log(this.categorys);
       });
       //获取动态参数的id
       const{id} = this.$route.params;
@@ -196,7 +195,7 @@ export default {
           const{status,message} = res.data;
           //对象合并
           this.form = {
-              ...messsage,
+              ...message,
               category_id:+message.category_id,
               fileList:message.fileList.map(v=>{
                   return{
@@ -206,7 +205,7 @@ export default {
               })
           }
           //imageUrl封面的预览
-        //   this.imageUrl = message.imgList[0].url;
+          this.imageUrl = message.imgList[0].url;
       })
     }
 };
